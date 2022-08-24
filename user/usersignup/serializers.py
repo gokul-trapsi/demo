@@ -22,12 +22,23 @@ class LoginSerializer(serializers.ModelSerializer):
 
     def partialupdate(self,instance,validated_data):
         instance = self.Meta.model(**validated_data)
-        if password is not None:
-            instance.set_password(password)
-            instance.save()
-            return instance
+        instance.save()
+        return instance
 
     class Meta:
          model = Login
          fields = ["id","mobileno","password","is_staff","is_admin","is_superuser","is_active",]
         
+class PasswordSerializer(serializers.ModelSerializer):
+    # password=serializers.CharField(write_only=True)
+    password=ReadOnlyPasswordHashField()
+
+    def update(self,instance,validated_data):
+    
+        instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
+
+    class Meta:
+         model = Login
+         fields = ["id","password"]
