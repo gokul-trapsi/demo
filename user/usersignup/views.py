@@ -87,21 +87,23 @@ class Loginview(viewsets.ViewSet):
 		except Login.DoesNotExist:
 			return Response("Not Found")
     
-	def passwordupdate(self,request,pk):
+class LoginReset(viewsets.ViewSet):
+	permission_classes=(IsAuthenticated,)
+
+	def passwordreset(self,request):
+		mobileno=request.data['mobileno']
+		user = request.user
 		try:
-			queryset= Login.objects.get(id=pk)
-			user = request.user
-			old_pwd=request.data['old_pwd']
-			if user.check_password(old_pwd):
-				if queryset != user:
-					return Response({'response':"You Dont Have permissions to update"})
-				serializer = PasswordSerializer(instance=queryset,data=request.data,partial=True)
-				if serializer.is_valid(raise_exception=True):
-					serializer.save()
-					return Response("Password Changed Successfully")
-			else:
-				return Response("Check Old Password")
+			queryset= Login.objects.get(mobileno=mobileno)
+			pwd={}
+			pwd['password'] = request.data['password']
+			if queryset != user:
+				return Response({'response':"You Dont Have permissions to update"})
+			serializer = PasswordSerializer(instance=queryset,data=pwd,partial=True)
+			if serializer.is_valid(raise_exception=True):
+				serializer.save()
+			return Response("Password Reset Successfully")
 		except Login.DoesNotExist:
-			return Response("Not Found")	
+			return Response("Not Found")
 
     
