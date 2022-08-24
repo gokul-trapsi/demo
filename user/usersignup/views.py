@@ -1,13 +1,15 @@
 from .serializers import *
-from zoopi.models import *
+from user.models import *
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import viewsets , status
 from rest_framework.generics import ListAPIView,RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated , IsAuthenticatedOrReadOnly , AllowAny
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.authtoken.views import obtain_auth_token
 
 
-@api_view(['POST'])
+
 class Newuser(viewsets.ModelViewSet):
 	permission_classes=[AllowAny,]
 	serializer_class= LoginSerializer
@@ -22,8 +24,7 @@ class Newuser(viewsets.ModelViewSet):
 		return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 class Userlist(viewsets.ViewSet):
-	permission_classes=( IsAuthenticatedOrReadOnly,)
-    @api_view(['GET'])
+	permission_classes=( IsAuthenticated,)
 	def list(self , request):
 		user = request.user
 		if user.is_superuser:
