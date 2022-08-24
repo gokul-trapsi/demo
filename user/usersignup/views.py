@@ -45,7 +45,7 @@ class Loginview(viewsets.ViewSet):
 			if user != queryset:
 				return Response({'response':"You Dont Have permissions to See user data"})
 			serializer = LoginSerializer(queryset,many=False)
-			return Response(serializer.data)
+			return Response(serializer.data,status=status.HTTP_201_CREATED)
 		except Login.DoesNotExist:
 			return Response("Not Found")
 	def update(self,request,pk):

@@ -22,8 +22,10 @@ class LoginSerializer(serializers.ModelSerializer):
 
     def partialupdate(self,instance,validated_data):
         instance = self.Meta.model(**validated_data)
-        instance.save()
-        return instance
+        if password is not None:
+            instance.set_password(password)
+            instance.save()
+            return instance
 
     class Meta:
          model = Login
